@@ -167,7 +167,7 @@ class Camera:
                 pass
             return None
     
-    def run(self):
+    def run_capture(self):
         """执行完整的拍照流程"""
         # 拍照
         self.capture()
@@ -185,6 +185,6 @@ class Camera:
 if __name__ == "__main__":
     cam = Camera()
     # 拍照
-    # cam.run()
+    # cam.run_capture()
     # 录像
     cam.run_video()
