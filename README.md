@@ -1,99 +1,99 @@
 # Micro-Camera
 
-This tutorial gives step by step instructions on how to set up MicroPython on the ESP32-CAM development board and turn it into a small digital camera that can take photos and save them on a SD card. The ESP32-CAM development board is a breakout board for the ESP32 that come with an SD card slot capable of up to 4 GB, OV2640 camera and a very bright led making it perfect for this project.
+本教程提供了在 ESP32-CAM 开发板上设置 MicroPython 的逐步说明，并将其变成一个可以拍照并将照片保存到 SD 卡的小型数码相机。ESP32-CAM 开发板是 ESP32 的扩展板，配备了一个支持高达 4GB 的 SD 卡插槽、OV2640 摄像头和一个非常明亮的 LED，非常适合这个项目。
 
 ![alt text](images/Micro-Camera.jpg)
 
-## Flashing MicroPython onto the ESP32-CAM
+## 将 MicroPython 刷入 ESP32-CAM
 
-I found that the best version of the firmware is maintained by [shariltumin](https://github.com/shariltumin) and can be found [here](https://github.com/shariltumin/esp32-cam-micropython/tree/master/firmwares) to download. Be sure that you check out his [blog](https://kopimojo.blogspot.com/) where he discusses the progress of his Micropython webcam project.
+我发现最好的固件版本由 [shariltumin](https://github.com/shariltumin) 维护，可以在[这里](https://github.com/shariltumin/esp32-cam-micropython/tree/master/firmwares)下载。请务必查看他的[博客](https://kopimojo.blogspot.com/)，他在博客中讨论了 MicroPython 摄像头项目的进展。
 
-Once the firmware is downloaded, you need to install the **esptool**:
+下载固件后，需要安装 **esptool**：
 
 ```shell
 pip install esptool
 ```
 
-Connect your USB to TTL UART Serial Converter to the ESP32-CAM board and put it in bootloader mode by connecting the IO0 pin to ground (shown in green).
+将 USB 转 TTL UART 串口转换器连接到 ESP32-CAM 开发板，并将 IO0 引脚接地（绿色所示）进入引导加载程序模式。
 
 ![alt text](images/ESPflash.png)
 
-_press RST button_
+_按下 RST 按钮_
 
-Then, erase the flash one the ESP32:
+然后，擦除 ESP32 上的闪存：
 
 ```shell
 esptool.py --port /dev/ttyUSB0 erase_flash
 ```
 
-cd into the directory that you put the firmware in and:
+进入放置固件的目录：
 
-_press RST button_
+_按下 RST 按钮_
 
 ```shell
 esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 460800 write_flash -z 0x1000 ESP32CAM_firmware.bin
 ```
 
-Now you have microython on the ESP32-CAM board!
+现在 ESP32-CAM 开发板上已经有 MicroPython 了！
 
-Disconnect the IO0 pin from ground then _press RST button_
+将 IO0 引脚与地断开，然后 _按下 RST 按钮_
 
-## Put the micropython code on the ESP32-CAM board
+## 将 MicroPython 代码放入 ESP32-CAM 开发板
 
-Install ampy
+安装 ampy
 
 ```shell
 pip install adafruit-ampy
 ```
 
-Clone Micro-Camera code:
+克隆 Micro-Camera 代码：
 
 ```shell
 git clone https://github.com/KipCrossing/Micro-Camera
 ```
 
-Go into the Micro-camera directory:
+进入 Micro-Camera 目录：
 
 ```shell
 cd Micro-Camera
 ```
 
-And put the code on the board
+将代码放入开发板
 
 ```shell
 ampy --port /dev/ttyUSB0 put boot.py
 ampy --port /dev/ttyUSB0 put main.py
 ```
 
-Insert an SD card, press RST button and see the camera flash and take a photo.
+插入 SD 卡，按下 RST 按钮，观察摄像头闪光并拍照。
 
-## Camera module
+## 摄像头模块
 
 ```python
 import camera
 
-# Setup camera perams
-camera.framesize(12) # between 0 and 13
-camera.quality(63) # between 9 and 64
-camera.contrast(0) # between -3 and 3
-camera.saturation(0) # between -3 and 3
-camera.brightness(0) # between -3 and 3
-camera.speffect(3) # between 0 and  7
-camera.whitebalance(2) # between 0 and 5
-camera.agcgain(0) # between 0 and 30
-camera.aelavels(0) # between -3 and 3
-camera.aecvalue(100) # between 0 and 1200
-camera.pixformat(0) # 0 for JPEG, 1 for YUV422 and 2 for RGB
+# 设置摄像头参数
+camera.framesize(12) # 0 到 13 之间
+camera.quality(63) # 9 到 64 之间
+camera.contrast(0) # -3 到 3 之间
+camera.saturation(0) # -3 到 3 之间
+camera.brightness(0) # -3 到 3 之间
+camera.speffect(3) # 0 到 7 之间
+camera.whitebalance(2) # 0 到 5 之间
+camera.agcgain(0) # 0 到 30 之间
+camera.aelavels(0) # -3 到 3 之间
+camera.aecvalue(100) # 0 到 1200 之间
+camera.pixformat(0) # 0 表示 JPEG，1 表示 YUV422，2 表示 RGB
 
-# take Photo
+# 拍照
 camera.init()
 buf = camera.capture()
 camera.deinit()
 ```
 
-## Flash LED
+## 闪光 LED
 
-The flash led is controlled by pin 4
+闪光 LED 由引脚 4 控制
 
 ```python
 import machine
@@ -105,7 +105,7 @@ time.sleep(0.2)
 led.off()
 ```
 
-## mounting the SD card
+## 挂载 SD 卡
 
 ```python
 import uos
@@ -113,13 +113,13 @@ import machine
 
 uos.mount(machine.SDCard(), "/sd")
 
-# Open file in SD
+# 打开 SD 卡中的文件
 
 f = open("sd/" + tfile, 'wb')
 ```
 
-## Example Image
+## 示例图像
 
-This is an example showing the quality of the image (Flash on)
+这是一个展示图像质量的示例（闪光灯开启）
 
 ![alt text](images/example.jpg)
