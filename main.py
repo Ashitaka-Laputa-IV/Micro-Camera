@@ -1,3 +1,5 @@
+# 核心逻辑: 读取number.txt文件, 获取当前图像编号, 已当前编号命名图片进行图片拍摄保存, 并且将编号+1写入number.txt文件以供下次使用
+
 import os
 import camera
 import machine
